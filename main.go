@@ -7,14 +7,22 @@ type Store struct {
 }
 
 func (s *Store) Get(key string) (string,bool){
-	return "" ,false
+	val,ok := s.data[key]
+	return val,ok
 }
 
 
 func (s *Store) Set(key,value string){
-	//return 
+	s.data[key]=value
 }
 
+
+func (s * Store) Delete(key string) {
+	if _,ok := s.data[key]; !ok {
+		return
+	}
+	delete(s.data,key)
+}
 
 func NewStore() *Store{
 	return &Store{
@@ -24,7 +32,9 @@ func NewStore() *Store{
 
 func main(){
 	store := NewStore()
-	store.Get("key1")
 	store.Set("key1","val1")
-	fmt.Println("")
+
+	val,_ := store.Get("key1")
+	fmt.Println(val)
+	//fmt.Println("ok",ok)
 }
