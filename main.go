@@ -1,9 +1,23 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	//"sort"
+	"slices"
+)
 
 type Store struct {
 	data map[string]string
+}
+
+func (s *Store) Keys() []string{
+	var keys []string 
+	for key := range s.data {
+		keys = append(keys,key)
+	}
+	//sort.Strings(keys)
+	slices.Sort(keys)
+	return keys
 }
 
 func (s *Store) Get(key string) (string,bool){
