@@ -7,7 +7,7 @@ import (
 
 func TestKeys_ReturnAllKeysSorted(t *testing.T){
 
-	store := NewStore()
+	store := NewStore(3)
 	store.Set("ammar","3")
 	store.Set("mai","344")
 	store.Set("waleed","34")
@@ -22,14 +22,14 @@ func TestKeys_ReturnAllKeysSorted(t *testing.T){
 
 
 func TestKey_EmptyKeys(t *testing.T){
-	store :=NewStore()
+	store :=NewStore(3)
 	if len(store.Keys()) > 0 {
 		t.Errorf("Store Keys() = Is not emtpy %v",store.Keys())
 	}
 }
 
 func TestSetGet_RoundTrip(t *testing.T) {
-	store := NewStore()
+	store := NewStore(3)
 	store.Set("hello", "world")
 
 	// 1. Test retrieving a missing key (we EXPECT an error or empty value here)
@@ -60,7 +60,7 @@ func TestDelete(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			store := NewStore()
+			store := NewStore(3)
 			for k, v := range tc.setup {
 				store.Set(k, v)
 			}
