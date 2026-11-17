@@ -28,16 +28,20 @@ func TestKey_EmptyKeys(t *testing.T){
 	}
 }
 
-func TestSetGet_RoundTrip(t *testing.T){
-	store :=NewStore()
-	store.Set("hello","world")
-	if val,ok :=store.Get("hello"); !ok || val!="world"{
-		t.Errorf("This key is not exist ")
-	} 
-	if val,ok := store.Get("missing"); ok || val !=""{
-		t.Error("This key is not exist ")
-	} 
+func TestSetGet_RoundTrip(t *testing.T) {
+	store := NewStore()
+	store.Set("hello", "world")
+
+	// 1. Test retrieving a missing key (we EXPECT an error or empty value here)
+	if val, err := store.Get("missing"); err == nil || val != "" {
+		t.Errorf("expected error for missing key, got value: %q", val)
+	}
+
+	if val, err := store.Get("hello"); err != nil || val != "world" {
+		t.Errorf("expected 'world', got %q (err: %v)", val, err)
+	}
 }
+
 
 
 // Table driven test
@@ -67,7 +71,7 @@ func TestDelete(t *testing.T) {
 				t.Errorf("after Delete(%q): Len() = %d, want %d", tc.deleteKey, got, tc.wantLen)
 			}
 
-			if _, ok := store.Get(tc.deleteKey); ok {
+			if _, err := store.Get(tc.deleteKey); err == nil {
 				t.Errorf("after Delete(%q): key still present", tc.deleteKey)
 			}
 		})

@@ -1,6 +1,11 @@
 package main
 
-import "slices"
+import (
+	"errors"
+	"slices"
+)
+
+var ErrKeyDoesNotExist = errors.New("Key is not exist")
 
 type Store struct {
 	data map[string]string
@@ -16,9 +21,12 @@ func (s *Store) Keys() []string{
 	return keys
 }
 
-func (s *Store) Get(key string) (string,bool){
+func (s *Store) Get(key string) (string,error){
 	val,ok := s.data[key]
-	return val,ok
+	if !ok {
+		return "",ErrKeyDoesNotExist
+	}
+	return val,nil
 }
 
 
