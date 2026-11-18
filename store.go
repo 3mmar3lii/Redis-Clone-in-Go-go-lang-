@@ -54,7 +54,6 @@ func (s *Store) Set(key,value string) error{
 
 }
 
-
 func (s * Store) Delete(key string) {
 	if _,ok := s.data[key]; !ok {
 		return

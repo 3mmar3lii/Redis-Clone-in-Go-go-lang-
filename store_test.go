@@ -3,6 +3,7 @@ package main
 import (
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestKeys_ReturnAllKeysSorted(t *testing.T){
@@ -76,4 +77,28 @@ func TestDelete(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestTTLStore_GetAfterExpiry(t * testing.T){
+	s := NewTTLStore(time.Second *3)
+	_ = s.Set("k","v")
+
+	// simulate waiting until key expires 
+	time.Sleep(5 * time.Second)
+
+	if val,err := s.Get("k"); err == nil || val != ""{
+		t.Errorf("excpected error after TTL, got nil")
+	}
+}
+func TestTTLStore_ExpiredKeyEvicted(t *testing.T){
+
+	store := NewTTLStore(time.Second *3)
+	_ = store.Set("k","v")
+
+		// simulate waiting until key expires 
+	time.Sleep(5 * time.Second)
+	if len(store.data) != 0 {
+		t.Errorf("Error while geting keys for this store ")
+	}
+
 }
