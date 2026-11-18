@@ -5,22 +5,31 @@ import (
 	"fmt"
 	"time"
 
+	"Redis-Clone/store"
 	"Redis-Clone/store/kv"
 	"Redis-Clone/store/ttl"
-	"Redis-Clone/store"
 )
 
 
-
+func CreateStore() store.Storer {
+	plain := kv.NewStore(2)
+	logger := NewLoggingMiddleware(plain)
+	return  logger
+} 
 
 func main(){
-	kvStore := kv.NewStore(2)
 	ttlStore := ttl.NewTTLStore(time.Second *2)
+	logger :=CreateStore()
+
 
 	// Encrypted Store 
-	encrypted,_ := store.SetKeyWithEncryptionStore(kvStore,"key4","value2")
+	encrypted,_ := store.SetKeyWithEncryptionStore(logger,"key4","value2")
 	encrypted2,_ := store.SetKeyWithEncryptionStore(ttlStore,"key1","value2")
-
+	
+	
+	if _,err :=logger.Get("fff");err != nil {
+		fmt.Println(err)
+	}
 	fmt.Println(encrypted,encrypted2)
 
 
