@@ -92,13 +92,18 @@ func TestTTLStore_GetAfterExpiry(t * testing.T){
 }
 func TestTTLStore_ExpiredKeyEvicted(t *testing.T){
 
-	store := NewTTLStore(time.Second *3)
+	store := NewTTLStore(time.Microsecond *50)
 	_ = store.Set("k","v")
 
 		// simulate waiting until key expires 
-	time.Sleep(5 * time.Second)
-	if len(store.data) != 0 {
-		t.Errorf("Error while geting keys for this store ")
+	time.Sleep(100 * time.Millisecond)
+	
+	val, err := store.Get("k")
+	if err == nil {
+		t.Errorf("expected an error for expired key 'k', got value %q and nil error", val)
+	}
+	if val != "" {
+		t.Errorf("expected empty string for expired key, got %q", val)
 	}
 
 }
