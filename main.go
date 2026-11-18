@@ -20,13 +20,14 @@ func CreateStore() store.Storer {
 func main(){
 	ttlStore := ttl.NewTTLStore(time.Second *2)
 	logger :=CreateStore()
-
+	matrixes := NewMatrixMiddleware(logger)
 
 	// Encrypted Store 
 	encrypted,_ := store.SetKeyWithEncryptionStore(logger,"key4","value2")
 	encrypted2,_ := store.SetKeyWithEncryptionStore(ttlStore,"key1","value2")
 	
-	
+	matrixes.Report()
+
 	if _,err :=logger.Get("fff");err != nil {
 		fmt.Println(err)
 	}
