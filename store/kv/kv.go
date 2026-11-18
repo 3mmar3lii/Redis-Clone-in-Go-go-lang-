@@ -1,4 +1,4 @@
-package main
+package kv
 
 import (
 	"errors"
@@ -54,11 +54,12 @@ func (s *Store) Set(key,value string) error{
 
 }
 
-func (s * Store) Delete(key string) {
+func (s * Store) Delete(key string) error{
 	if _,ok := s.data[key]; !ok {
-		return
+		return ErrKeyDoesNotExist
 	}
 	delete(s.data,key)
+	return  nil
 }
 
 func (s *Store)Len()int{
