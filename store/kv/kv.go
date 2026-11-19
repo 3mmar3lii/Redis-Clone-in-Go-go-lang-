@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"slices"
+	"time"
 )
 
 var ErrKeyDoesNotExist = errors.New("Key is not exist")
@@ -43,6 +44,8 @@ func (s *Store) Set(key,value string) error{
 		return ErrorKeyIsEmpty
 	}
 	_,exist := s.data[key]
+
+	time.Sleep(time.Second)
 	
 	if s.maxSize > 0 && len(s.data) >= s.maxSize && !exist{
 		// throw error based on what type of error happen 

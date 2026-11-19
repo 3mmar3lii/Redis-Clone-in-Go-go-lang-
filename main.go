@@ -3,11 +3,11 @@ package main
 import (
 	//"errors"
 	"fmt"
-	"time"
+	//"time"
 
 	"Redis-Clone/store"
 	"Redis-Clone/store/kv"
-	"Redis-Clone/store/ttl"
+	//"Redis-Clone/store/ttl"
 )
 
 func CreateStore() store.Storer {
@@ -17,34 +17,47 @@ func CreateStore() store.Storer {
 }
 
 func main() {
-	ttlStore := ttl.NewTTLStore(time.Second * 2)
-	logger := CreateStore()
-	metrics := NewMatrixMiddleware(logger)
-
-	// Encrypted Store
-	encrypted, _ := store.SetKeyWithEncryptionStore(metrics, "key4", "value2")
-	encrypted2, _ := store.SetKeyWithEncryptionStore(ttlStore, "key1", "value2")
-
-	if _, err := metrics.Get("fff"); err != nil {
-		fmt.Println(err)
+	cmds := []Command{
+		{Op: "SET", Key: "env", Value: "production"},
+		{Op: "SET", Key: "version", Value: "0.0.1"},
+		{Op: "SET", Key: "debug", Value: "true"},
+		{Op: "GET", Key: "env"},
+		{Op: "SET", Key: "region", Value: "eu-west-1"},
+		{Op: "GET", Key: "version"},
 	}
-	metrics.Report()
-	fmt.Println(encrypted, encrypted2)
 
-	//store.Set("key1","val1") // len:0 maxSize:1
-	//store.Set("key2","val1") // len:1 maxSize:1
+	cmdStore := CreateStore()
+	RestoreOnBoot(cmdStore,cmds)
 
-	//if errStoreFull := store.Set("key3","val2"); errStoreFull != nil{ // len:2 maxSize:1
-	//	fmt.Println("Key is already exist")
-	//	return
-	//}
+	//ttlStore := ttl.NewTTLStore(time.Second * 2)
+	//logger := CreateStore()
+	//metrics := NewMatrixMiddleware(logger)
 
-	//if _,err := store.Get("key1"); err != nil {
+	//// Encrypted Store
+	//encrypted, _ := store.SetKeyWithEncryptionStore(metrics, "key4", "value2")
+	//encrypted2, _ := store.SetKeyWithEncryptionStore(ttlStore, "key1", "value2")
+
+	//if _, err := metrics.Get("fff"); err != nil {
 	//	fmt.Println(err)
 	//}
-	//// Way 2 of error handling
-	//_,err := store.Get("key1");
-	//if errors.Is(err,ErrKeyDoesNotExist) {
-	//	fmt.Println(err)
-	//}
+	//metrics.Report()
+	//fmt.Println(encrypted, encrypted2)
+
+}
+
+func PopulateDefaults(s store.Storer) error {
+
+	defaults := map[string]string{
+		"env":     "development",
+		"version": "0.0.1",
+		"debug":   "true",
+	}
+
+	for k, v := range defaults {
+		if err := s.Set(k, v); err != nil {
+			return fmt.Errorf("PopulateDefaults: %w", err)
+		}
+	}
+
+	return nil
 }
