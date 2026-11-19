@@ -7,56 +7,52 @@ import (
 )
 
 type MetrixMiddleware struct {
-	inner store.Storer
-	setCalls int
-	getCalls int
-	deleteCalls int
-	lenCalls int
-	getMisses int
+	inner           store.Storer
+	setCalls        int
+	getCalls        int
+	deleteCalls     int
+	lenCalls        int
+	getMisses       int
 	totalSetLatency time.Duration
 	totalGetLatency time.Duration
 }
 
-
-func NewMatrixMiddleware(store store.Storer) * MetrixMiddleware {
+func NewMatrixMiddleware(store store.Storer) *MetrixMiddleware {
 	return &MetrixMiddleware{
-		inner : store,
+		inner: store,
 	}
 }
 
-
-func (m *MetrixMiddleware)Set(key,value string) error{
+func (m *MetrixMiddleware) Set(key, value string) error {
 	now := time.Now()
+	err := m.inner.Set(key, value)
 	m.setCalls++
 	m.totalSetLatency += time.Since(now)
-	return m.inner.Set(key,value)
+	return err
 }
 
-
-func (m *MetrixMiddleware)Get(key,value string) (string,error){
+func (m *MetrixMiddleware) Get(key string) (string, error) {
 	now := time.Now()
-	val,err := m.inner.Get(key)
+	val, err := m.inner.Get(key)
 	m.getCalls++
 	if err != nil {
 		m.getMisses++
 	}
 	m.totalGetLatency += time.Since(now)
-	return val,err
+	return val, err
 }
 
-
-func (m *MetrixMiddleware)Delete(key string) error{
+func (m *MetrixMiddleware) Delete(key string) error {
 	m.deleteCalls++
 	return m.inner.Delete(key)
 }
 
-func (m *MetrixMiddleware)Len() int{
+func (m *MetrixMiddleware) Len() int {
 	m.lenCalls++
 	return m.inner.Len()
 }
 
-
-func (m *MetrixMiddleware)Keys() []string{
+func (m *MetrixMiddleware) Keys() []string {
 	return m.inner.Keys()
 }
 
