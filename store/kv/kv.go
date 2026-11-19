@@ -73,3 +73,13 @@ func NewStore(maxSizeKey int) *Store{
 	}
 }
 
+func (s *Store) Clone() *Store {
+	newDate :=make(map[string]string,len(s.data))
+	for key,val := range s.data {
+		newDate[key]=val
+	}
+	return &Store{
+		data:newDate,
+		maxSize: s.maxSize,
+	}
+}
