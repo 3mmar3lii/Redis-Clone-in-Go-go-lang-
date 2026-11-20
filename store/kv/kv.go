@@ -16,7 +16,7 @@ var ErrStoreIsFull = errors.New("Store if at max capacity")
 type Store struct {
 	data    map[string]string
 	maxSize int
-	mu      sync.Mutex
+	mu      sync.RWMutex
 }
 
 func (s *Store) Keys() []string {
@@ -33,8 +33,8 @@ func (s *Store) Keys() []string {
 }
 
 func (s *Store) Get(key string) (string, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 
 	if key == "" {
 		return "", ErrorKeyIsEmpty
