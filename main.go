@@ -17,17 +17,31 @@ func CreateStore() store.Storer {
 }
 
 func main() {
-	cmds := []Command{
-		{Op: "SET", Key: "env", Value: "production"},
-		{Op: "SET", Key: "version", Value: "0.0.1"},
-		{Op: "SET", Key: "debug", Value: "true"},
-		{Op: "GET", Key: "env"},
-		{Op: "SET", Key: "region", Value: "eu-west-1"},
-		{Op: "GET", Key: "version"},
-	}
+	//cmds := []Command{
+	//	{Op: "SET", Key: "env", Value: "production"},
+	//	{Op: "SET", Key: "version", Value: "0.0.1"},
+	//	{Op: "SET", Key: "debug", Value: "true"},
+	//	{Op: "GET", Key: "env"},
+	//	{Op: "SET", Key: "region", Value: "eu-west-1"},
+	//	{Op: "GET", Key: "version"},
+	//}
 
 	cmdStore := CreateStore()
+	
+	cmdStore.Set("pageviews","0")
+	const hits = 1000
+	cmds := make([]Command,hits)
+	
+	for i := range cmds {
+		cmds[i]=Command{Op: "INCR",Key: "pageviews"}
+	}
+
 	RestoreOnBoot(cmdStore,cmds)
+
+	
+	got,_ := cmdStore.Get("pageviews")
+	fmt.Println("expected: %d\n", hits)
+	fmt.Println("got:			 %s\n", got)
 
 	//ttlStore := ttl.NewTTLStore(time.Second * 2)
 	//logger := CreateStore()

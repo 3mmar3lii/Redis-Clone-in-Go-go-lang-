@@ -52,3 +52,8 @@ func (l *LoggingMiddleware) Keys() []string {
 	l.logger.Printf("KEYS %v", got) // side efffect
 	return got
 }
+
+func (l *LoggingMiddleware) INCR(key string) (int,error) {
+	return l.inner.INCR(key)
+}
+

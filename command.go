@@ -22,6 +22,9 @@ func dispatch(s store.Storer, c Command) error {
 		return s.Delete(c.Key)
 	case "GET", "KEYS":
 		return nil
+	case "INCR":
+		s.INCR(c.Key)
+		return nil
 	default:
 		return fmt.Errorf("unknown operation: %s", c.Op)
 	}

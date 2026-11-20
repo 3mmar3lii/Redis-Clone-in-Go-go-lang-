@@ -16,6 +16,7 @@ type Storer interface {
 	Keys() []string
 	Delete(string) error
 	Len() int
+	INCR(string) (int,error)
 }
 
 func SetKeyWithEncryptionStore(store Storer, key, value string) (string, error) {
