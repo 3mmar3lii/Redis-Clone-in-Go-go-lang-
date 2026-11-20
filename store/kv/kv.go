@@ -20,8 +20,8 @@ type Store struct {
 }
 
 func (s *Store) Keys() []string {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 
 	var keys []string
 	for key := range s.data {
@@ -78,8 +78,8 @@ func (s *Store) Delete(key string) error {
 }
 
 func (s *Store) Len() int {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	return len(s.data)
 }
 
@@ -92,6 +92,8 @@ func NewStore(maxSizeKey int) *Store {
 
 func (s *Store) Clone() *Store {
 	newDate := make(map[string]string, len(s.data))
+	s.mu.RLock()
+	defer s.mu.RUnlock()
 	for key, val := range s.data {
 		newDate[key] = val
 	}
